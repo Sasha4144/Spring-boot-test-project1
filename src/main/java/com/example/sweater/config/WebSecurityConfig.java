@@ -4,6 +4,7 @@ import com.example.sweater.service.JpaUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
     private final JpaUserDetailsService jpaUserDetailsService;
@@ -26,7 +28,7 @@ public class WebSecurityConfig {
                 .authorizeRequests(auth -> {
                     try {
                         auth
-                                    .requestMatchers("/", "/registration").permitAll()
+                                    .requestMatchers("/", "/registration", "/static/**").permitAll()
                                     .anyRequest().authenticated()
                                 .and()
                                     .formLogin()
@@ -34,9 +36,9 @@ public class WebSecurityConfig {
                                     .permitAll()
                                 .and()
                                     .logout()
-                                    .permitAll()
-                                .and()
-                                .csrf().disable();
+                                    .permitAll();
+                                //.and()
+                                //.csrf().disable();
                                 //.and()
                                 //.userDetailsService(jpaUserDetailsService);
                     } catch (Exception e) {
