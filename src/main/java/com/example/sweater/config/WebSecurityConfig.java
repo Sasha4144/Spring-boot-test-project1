@@ -1,12 +1,15 @@
 package com.example.sweater.config;
 
+import com.example.sweater.repository.UserRepository;
 import com.example.sweater.service.JpaUserDetailsService;
+import com.example.sweater.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,7 +31,7 @@ public class WebSecurityConfig {
                 .authorizeRequests(auth -> {
                     try {
                         auth
-                                    .requestMatchers("/", "/registration", "/static/**").permitAll()
+                                    .requestMatchers("/", "/registration", "/static/**", "/activate/*").permitAll()
                                     .anyRequest().authenticated()
                                 .and()
                                     .formLogin()

@@ -1,28 +1,21 @@
 package com.example.sweater.controller;
 
-import com.example.sweater.domain.Role;
 import com.example.sweater.domain.User;
-import com.example.sweater.repository.RoleRepository;
-import com.example.sweater.repository.UserRepository;
+import com.example.sweater.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.*;
+import java.util.Map;
 
 @Controller
 public class RegistrationController {
     
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @GetMapping("/registration")
     public String registration(){
@@ -31,18 +24,22 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(User user, Map<String, Object> model){
-        Optional<User> userFromDb = userRepository.findByUsername(user.getUsername());
-        if(userFromDb.isPresent()){
+        if(!userService.addUser(user)){
             model.put("message", "User exists!");
             System.out.println("User exists!");
             return "registration";
         }
-        Collection<Role> roles = new HashSet<>();
-        roles.add(roleRepository.findByName("USER").get());
-        user.setActive(true);
-        user.setRoles(roles);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
         return "redirect:/login";
+    }
+
+    @GetMapping("/activate/{code}")
+    public String activate(Model model, @PathVariable String code){
+        boolean isActivated = userService.activateUser(code);
+        if(isActivated){
+            model.addAttribute("message", "User successfully activated!");
+        } else {
+            model.addAttribute("message", "Activation code is not found!");
+        }
+        return "login";
     }
 }
