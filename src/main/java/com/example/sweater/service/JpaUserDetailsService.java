@@ -1,6 +1,5 @@
 package com.example.sweater.service;
 
-import com.example.sweater.domain.User;
 import com.example.sweater.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,4 +19,5 @@ public class JpaUserDetailsService implements UserDetailsService {
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found" + username));
     }
+
 }
